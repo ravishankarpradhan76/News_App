@@ -4,7 +4,7 @@ import '../views/details/details_view.dart';
 
 class AppRoutes {
   static final routes = [
-    GetPage(name: '/', page: () => BottomNavBar()),
-    GetPage(name: '/details', page: () => DetailsView()),
+    GetPage(name: '/', page: () => const BottomNavBar()),
+    GetPage(name: '/details', page: () => const DetailsView()),
   ];
 }

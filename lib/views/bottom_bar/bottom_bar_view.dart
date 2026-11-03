@@ -4,12 +4,14 @@ import 'package:news_app/constants/color_constants.dart';
 import 'package:news_app/views/home/home_view.dart';
 
 class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
+
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
+  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {

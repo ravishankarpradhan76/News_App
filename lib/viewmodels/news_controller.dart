@@ -5,6 +5,7 @@ import '../models/news_article.dart';
 class NewsController extends GetxController {
   var newsList = <Results>[].obs;
   var isLoading = true.obs;
+  var errorMessage = ''.obs;
   var filteredNewsList = <Results>[].obs;
   var searchQuery = ''.obs;
 
@@ -14,12 +15,15 @@ class NewsController extends GetxController {
     super.onInit();
   }
 
-  void fetchNews() async {
+  Future<void> fetchNews() async {
     try {
       isLoading(true);
+      errorMessage('');
       var fetchedNews = await ApiService().fetchNews();
-      newsList.assignAll(fetchedNews); // Store the full list
-      filteredNewsList.assignAll(newsList); // Set initially to all news
+      newsList.assignAll(fetchedNews);
+      filterNews(searchQuery.value);
+    } catch (e) {
+      errorMessage(e.toString().replaceAll('Exception: ', ''));
     } finally {
       isLoading(false);
     }
@@ -27,7 +31,7 @@ class NewsController extends GetxController {
 
   void filterNews(String query) {
     searchQuery.value = query;
-    if (query.isEmpty) {
+    if (query.trim().isEmpty) {
       filteredNewsList.assignAll(newsList);
     } else {
       filteredNewsList.assignAll(

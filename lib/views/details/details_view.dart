@@ -5,6 +5,8 @@ import 'package:news_app/constants/string_constants.dart';
 import 'package:news_app/models/news_article.dart';
 
 class DetailsView extends StatelessWidget {
+  const DetailsView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final Results article = Get.arguments as Results;
@@ -24,7 +26,7 @@ class DetailsView extends StatelessWidget {
                     color: Colors.blue, fontWeight: FontWeight.bold),
               ),
               background: Hero(
-                tag: article.articleId ?? 0,
+                tag: article.articleId ?? UniqueKey().toString(),
                 child: Image.network(
                   article.imageUrl ?? StringConstants.placeholder,
                   fit: BoxFit.cover,
@@ -61,10 +63,14 @@ class DetailsView extends StatelessWidget {
                         backgroundImage: article.sourceIcon != null &&
                                 article.sourceIcon!.isNotEmpty
                             ? NetworkImage(article.sourceIcon!)
-                            : const AssetImage('assets/images/default_icon.png')
-                                as ImageProvider,
+                            : null,
                         radius: 15,
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: Colors.grey[200],
+                        child: article.sourceIcon == null ||
+                                article.sourceIcon!.isEmpty
+                            ? const Icon(Icons.newspaper,
+                                size: 16, color: Colors.grey)
+                            : null,
                       ),
                       const SizedBox(width: 8),
                       Expanded(

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:news_app/constants/color_constants.dart';
 import 'package:news_app/constants/string_constants.dart';
-import 'package:news_app/core/theme_service.dart';
 import 'package:news_app/viewmodels/news_controller.dart';
 import '../models/news_article.dart';
 
 class NewsCard extends StatelessWidget {
   final Results article;
 
-  const NewsCard({required this.article, Key? key}) : super(key: key);
+  const NewsCard({required this.article, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ThemeService themeService = Get.put(ThemeService());
     return GestureDetector(
         onTap: () => Get.toNamed('/details', arguments: article),
         child: TweenAnimationBuilder(
@@ -28,7 +25,7 @@ class NewsCard extends StatelessWidget {
                       child: Opacity(
                         opacity: value,
                         child: Dismissible(
-                          key: Key(article.articleId.toString() ?? ""),
+                          key: Key(article.articleId ?? UniqueKey().toString()),
                           direction: DismissDirection.endToStart,
                           onDismissed: (direction) {
                             final newsController = Get.find<NewsController>();
@@ -52,13 +49,15 @@ class NewsCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Hero(
-                                  tag: article.articleId ?? 0,
+                                  tag: article.articleId ?? UniqueKey().toString(),
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(12)),
                                     child: Image.network(
-                                      article.imageUrl ??
-                                          StringConstants.placeholder,
+                                      (article.imageUrl != null &&
+                                              article.imageUrl!.isNotEmpty)
+                                          ? article.imageUrl!
+                                          : StringConstants.placeholder,
                                       height: 180,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
@@ -93,10 +92,18 @@ class NewsCard extends StatelessWidget {
                                       Row(
                                         children: [
                                           CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                article.sourceIcon ?? ''),
+                                            backgroundImage: (article.sourceIcon !=
+                                                        null &&
+                                                    article.sourceIcon!.isNotEmpty)
+                                                ? NetworkImage(article.sourceIcon!)
+                                                : null,
                                             radius: 12,
-                                            backgroundColor: Colors.transparent,
+                                            backgroundColor: Colors.grey[200],
+                                            child: (article.sourceIcon == null ||
+                                                    article.sourceIcon!.isEmpty)
+                                                ? const Icon(Icons.newspaper,
+                                                    size: 14, color: Colors.grey)
+                                                : null,
                                           ),
                                           const SizedBox(width: 8),
                                           Expanded(

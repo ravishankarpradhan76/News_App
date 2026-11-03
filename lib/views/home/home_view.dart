@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:news_app/constants/color_constants.dart';
 import 'package:news_app/constants/string_constants.dart';
-import 'package:news_app/core/api_service.dart';
 import 'package:news_app/core/theme_service.dart';
 import '../../viewmodels/news_controller.dart';
 import '../../widgets/news_card.dart';
@@ -10,6 +9,8 @@ import '../../widgets/shimmer_loader.dart';
 
 class HomeView extends StatelessWidget {
   final NewsController controller = Get.put(NewsController());
+
+  HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +27,14 @@ class HomeView extends StatelessWidget {
           actions: [
             GetBuilder<ThemeService>(
               init: ThemeService(),
-              builder: (controller) => IconButton(
+              builder: (themeController) => IconButton(
                 icon: Icon(
-                  controller.isDarkMode.value
+                  themeController.isDarkMode.value
                       ? Icons.dark_mode
                       : Icons.light_mode,
                   color: Colors.white,
                 ),
-                onPressed: controller.toggleTheme,
+                onPressed: themeController.toggleTheme,
               ),
             ),
           ],
@@ -61,10 +62,50 @@ class HomeView extends StatelessWidget {
           onRefresh: _refreshNews,
           child: Obx(() {
             if (controller.isLoading.value) {
-              return ShimmerLoader();
+              return const ShimmerLoader();
+            }
+            if (controller.errorMessage.value.isNotEmpty) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline,
+                          size: 60, color: Colors.redAccent),
+                      const SizedBox(height: 12),
+                      Text(
+                        controller.errorMessage.value,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => controller.fetchNews(),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(StringConstants.retry),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorConstant.primary,
+                          foregroundColor: ColorConstant.whiteText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
             if (controller.filteredNewsList.isEmpty) {
-              return const Center(child: Text(StringConstants.noResultsFound));
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  alignment: Alignment.center,
+                  child: const Text(StringConstants.noResultsFound),
+                ),
+              );
             }
 
             return ListView.builder(
@@ -101,6 +142,6 @@ class HomeView extends StatelessWidget {
 
   // Function to refresh the news list
   Future<void> _refreshNews() async {
-    await ApiService().fetchNews();
+    await controller.fetchNews();
   }
 }
