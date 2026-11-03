@@ -1,7 +1,13 @@
-# GitHub Linguist overrides to mark generated Flutter platform boilerplate as generated
-android/* linguist-generated=true
-ios/* linguist-generated=true
-web/* linguist-generated=true
-linux/* linguist-generated=true
-macos/* linguist-generated=true
-windows/* linguist-generated=true
+# Exclude platform runner boilerplate from GitHub language breakdown stats
+android/** linguist-detectable=false
+android/** linguist-vendored=true
+ios/** linguist-detectable=false
+ios/** linguist-vendored=true
+web/** linguist-detectable=false
+web/** linguist-vendored=true
+linux/** linguist-detectable=false
+linux/** linguist-vendored=true
+macos/** linguist-detectable=false
+macos/** linguist-vendored=true
+windows/** linguist-detectable=false
+windows/** linguist-vendored=true
